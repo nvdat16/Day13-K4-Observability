@@ -1,0 +1,38 @@
+{
+  "prompt_name": "day13-chat",
+  "description": "Prompt versioning for Day 13 Observability Lab",
+  "created_at": "2026-08-11T09:30:00Z",
+  "versions": [
+    {
+      "version": 1,
+      "labels": ["baseline", "production"],
+      "prompt_text": "You are an AI assistant for a VinAI observability lab.\n\nFeature={{feature}}\nDocs={{docs}}\nQuestion={{message}}\n\nPlease provide a helpful, accurate response based on the provided documentation.",
+      "created": true
+    },
+    {
+      "version": 2,
+      "labels": ["candidate"],
+      "prompt_text": "[SYSTEM] Observability AI Assistant - VinAI Lab\n\n**Task**: Answer user questions using provided RAG documentation.\n\n**Context**:\n- Feature: {{feature}}\n- Retrieved Docs: {{docs}}\n\n**User Query**:\n{{message}}\n\n**Response Guidelines**:\n1. Base your answer on the retrieved documentation\n2. Be concise but complete\n3. If information is not in docs, say so clearly",
+      "created": true
+    }
+  ],
+  "rollbacks": [
+    {
+      "action": "production_label_rollback",
+      "from_version": 2,
+      "to_version": 1,
+      "status": "manual",
+      "instructions": "Go to Langfuse dashboard > Prompts > day13-chat > change production label to version 1"
+    }
+  ],
+  "trace_metadata_fields": [
+    "prompt_name",
+    "prompt_label",
+    "prompt_version",
+    "prompt_source",
+    "correlation_id",
+    "session_id",
+    "user_id_hash"
+  ],
+  "langfuse_dashboard_url": "https://us.cloud.langfuse.com"
+}

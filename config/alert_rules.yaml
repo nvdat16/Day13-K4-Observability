@@ -1,19 +1,40 @@
 alerts:
-  - name: high_latency_p95
+  # Alert 1: High Latency - triệu chứng người dùng phản ánh API chậm
+  - name: High Latency P95
     severity: warning
-    condition: "latency_p95_ms > 3000 for 5 minutes"
+    condition: "p95_latency_ms > 3000 for 5 minutes"
     type: symptom-based
-    owner: on-call-engineer
+    sli: latency_p95_ms
+    slo: "99.5% requests under 3000ms"
+    owner: sre-team
     runbook: docs/alerts.md#alert-1
-  - name: elevated_error_rate
+
+  # Alert 2: Error Rate Spike - người dùng nhận được lỗi
+  - name: High Error Rate
     severity: critical
-    condition: "error_rate_pct > 5 for 3 minutes"
+    condition: "error_rate_pct > 2 for 2 minutes"
     type: symptom-based
-    owner: on-call-engineer
+    sli: error_rate_pct
+    slo: "99.0% successful requests"
+    owner: sre-team
     runbook: docs/alerts.md#alert-2
-  - name: cost_budget_exceeded
+
+  # Alert 3: Cost Spike - chi phí vượt ngân sách dự kiến
+  - name: Cost Budget Exceeded
     severity: warning
-    condition: "daily_cost_usd > 2.5"
+    condition: "cost_per_hour > 2.5 for 10 minutes"
     type: symptom-based
-    owner: team-lead
+    sli: daily_cost_usd
+    slo: "Under $2.50 per day"
+    owner: platform-team
     runbook: docs/alerts.md#alert-3
+
+  # Alert 4: Low Quality - chất lượng response không đạt kỳ vọng
+  - name: Low Quality Score
+    severity: warning
+    condition: "quality_score_avg < 0.75 for 5 minutes"
+    type: symptom-based
+    sli: quality_score_avg
+    slo: "95% requests with quality >= 0.75"
+    owner: ml-team
+    runbook: docs/alerts.md#alert-4

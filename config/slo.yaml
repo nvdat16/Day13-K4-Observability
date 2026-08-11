@@ -1,16 +1,42 @@
 service: day13-observability-lab
 window: 28d
+error_budget:
+  policy: "If any SLO burns >50% budget in 1 hour, page on-call immediately"
+
 slis:
   latency_p95_ms:
     objective: 3000
+    unit: ms
     target: 99.5
-    note: Replace with your group's target
+    measurement_method: "P95 latency from response_sent.latency_ms in data/logs.jsonl over 1-minute buckets"
+    good_event: "response_sent"
+    acceptable_threshold: "P95 <= 3000ms"
+    description: "Time from request received to response sent for 95th percentile of requests"
+
   error_rate_pct:
     objective: 2
+    unit: percent
     target: 99.0
+    measurement_method: "(count request_failed / count request_received) * 100, measured over 1-minute windows"
+    good_event: "request_received"
+    bad_event: "request_failed"
+    acceptable_threshold: "error_rate <= 2%"
+    description: "Percentage of requests that return HTTP 500 or trigger request_failed event"
+
   daily_cost_usd:
     objective: 2.5
+    unit: usd
     target: 100.0
+    measurement_method: "Sum of response_sent.cost_usd from data/logs.jsonl, aggregated per hour then extrapolated to daily"
+    good_event: "response_sent"
+    acceptable_threshold: "cost_per_hour <= 2.50"
+    description: "Estimated LLM API cost based on token usage (input: $3/M tokens, output: $15/M tokens)"
+
   quality_score_avg:
     objective: 0.75
+    unit: score_0_to_1
     target: 95.0
+    measurement_method: "Mean of response_sent.quality_score from data/logs.jsonl over rolling 5-minute window"
+    good_event: "response_sent"
+    acceptable_threshold: "mean_quality >= 0.75"
+    description: "Heuristic quality score: 0.5 base + 0.2 for docs retrieved + 0.1 for answer length + 0.1 for keyword match - 0.2 if PII redacted"

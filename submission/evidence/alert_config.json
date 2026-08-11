@@ -1,0 +1,41 @@
+{
+  "file": "config/alert_rules.yaml",
+  "alerts": [
+    {
+      "name": "High Latency P95",
+      "severity": "warning",
+      "condition": "P95 > 3000ms for 5 min",
+      "sli": "latency_p95_ms",
+      "slo": "99.5% under 3000ms",
+      "runbook": "docs/alerts.md#alert-1",
+      "owner": "sre-team"
+    },
+    {
+      "name": "High Error Rate",
+      "severity": "critical",
+      "condition": "Error rate > 2% for 2 min",
+      "sli": "error_rate_pct",
+      "slo": "99.0% successful",
+      "runbook": "docs/alerts.md#alert-2",
+      "owner": "sre-team"
+    },
+    {
+      "name": "Cost Budget Exceeded",
+      "severity": "warning",
+      "condition": "Cost > $2.50/hr for 10 min",
+      "sli": "daily_cost_usd",
+      "slo": "Under $2.50/day",
+      "runbook": "docs/alerts.md#alert-3",
+      "owner": "platform-team"
+    },
+    {
+      "name": "Low Quality Score",
+      "severity": "warning",
+      "condition": "Quality < 0.75 for 5 min",
+      "sli": "quality_score_avg",
+      "slo": "95% >= 0.75",
+      "runbook": "docs/alerts.md#alert-4",
+      "owner": "ml-team"
+    }
+  ]
+}

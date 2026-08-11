@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from structlog.contextvars import get_contextvars
 
 from . import metrics
+from .logging_config import get_logger
 from .mock_llm import FakeLLM
 from .mock_rag import retrieve
 from .pii import hash_user_id, summarize_text
@@ -27,6 +28,7 @@ class LabAgent:
     def __init__(self, model: str = "claude-sonnet-4-5") -> None:
         self.model = model
         self.llm = FakeLLM(model=model)
+        self.log = get_logger()
 
     @observe(as_type="generation", capture_input=False, capture_output=False)
     def run(self, user_id: str, feature: str, session_id: str, message: str) -> AgentResult:
@@ -46,36 +48,41 @@ class LabAgent:
         cost_usd = self._estimate_cost(response.usage.input_tokens, response.usage.output_tokens)
         correlation_id = get_contextvars().get("correlation_id", "MISSING")
 
-        langfuse_client.update_current_trace(
-            user_id=hash_user_id(user_id),
-            session_id=session_id,
-            tags=["lab", feature, self.model],
-            metadata={
-                "correlation_id": correlation_id,
-                "prompt_name": prompt.name,
-                "prompt_label": prompt.label,
-                "prompt_version": prompt.version,
-                "prompt_source": prompt.source,
-            },
-        )
-        langfuse_client.update_current_generation(
-            model=self.model,
-            metadata={
-                "doc_count": len(docs),
-                "query_preview": summarize_text(message),
-                "prompt_name": prompt.name,
-                "prompt_label": prompt.label,
-                "prompt_version": prompt.version,
-                "prompt_source": prompt.source,
-                "prompt_fetch_error": prompt.fetch_error,
-            },
-            usage_details={
-                "prompt_tokens": response.usage.input_tokens,
-                "completion_tokens": response.usage.output_tokens,
-            },
-            cost_details={"total": cost_usd},
-            prompt=prompt.managed_prompt,
-        )
+        # Langfuse SDK v3: wrap in try-except to handle API changes gracefully
+        try:
+            langfuse_client.update_current_trace(
+                user_id=hash_user_id(user_id),
+                session_id=session_id,
+                tags=["lab", feature, self.model],
+                metadata={
+                    "correlation_id": correlation_id,
+                    "prompt_name": prompt.name,
+                    "prompt_label": prompt.label,
+                    "prompt_version": prompt.version,
+                    "prompt_source": prompt.source,
+                },
+            )
+            langfuse_client.update_current_generation(
+                model=self.model,
+                metadata={
+                    "doc_count": len(docs),
+                    "query_preview": summarize_text(message),
+                    "prompt_name": prompt.name,
+                    "prompt_label": prompt.label,
+                    "prompt_version": prompt.version,
+                    "prompt_source": prompt.source,
+                    "prompt_fetch_error": prompt.fetch_error,
+                },
+                usage_details={
+                    "prompt_tokens": response.usage.input_tokens,
+                    "completion_tokens": response.usage.output_tokens,
+                },
+                cost_details={"total": cost_usd},
+                prompt=prompt.managed_prompt,
+            )
+        except (AttributeError, TypeError) as e:
+            # Langfuse SDK v3 API changed - log but don't fail the request
+            self.log.warning("langfuse_update_failed", error=str(e), correlation_id=correlation_id)
 
         metrics.record_request(
             latency_ms=latency_ms,

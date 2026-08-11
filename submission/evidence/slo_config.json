@@ -1,0 +1,35 @@
+{
+  "file": "config/slo.yaml",
+  "service": "day13-observability-lab",
+  "window": "28d",
+  "slis": [
+    {
+      "name": "latency_p95_ms",
+      "objective": 3000,
+      "unit": "ms",
+      "target": "99.5%",
+      "measurement": "P95 from response_sent.latency_ms, 1-min buckets"
+    },
+    {
+      "name": "error_rate_pct",
+      "objective": 2,
+      "unit": "percent",
+      "target": "99.0%",
+      "measurement": "(failed/received) * 100, 1-min windows"
+    },
+    {
+      "name": "daily_cost_usd",
+      "objective": 2.5,
+      "unit": "usd",
+      "target": "100%",
+      "measurement": "Sum cost_usd, extrapolated hourly→daily"
+    },
+    {
+      "name": "quality_score_avg",
+      "objective": 0.75,
+      "unit": "score_0_to_1",
+      "target": "95.0%",
+      "measurement": "Mean quality_score, rolling 5-min window"
+    }
+  ]
+}

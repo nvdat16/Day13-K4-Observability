@@ -1,0 +1,207 @@
+{
+  "timestamp": "2026-08-11T16:19:29.924483",
+  "total_logs": 266,
+  "unique_correlation_ids": 91,
+  "samples": [
+    {
+      "service": "api",
+      "payload": {
+        "message_preview": "What is your refund policy? My email is [REDACTED_EMAIL]"
+      },
+      "event": "request_received",
+      "level": "info",
+      "ts": "2026-08-11T07:58:40.744887Z"
+    },
+    {
+      "service": "api",
+      "payload": {
+        "message_preview": "Explain why metrics traces and logs work together"
+      },
+      "event": "request_received",
+      "level": "info",
+      "ts": "2026-08-11T07:58:42.974105Z"
+    },
+    {
+      "service": "api",
+      "payload": {
+        "message_preview": "Summarize the monitoring policy for production logging"
+      },
+      "event": "request_received",
+      "level": "info",
+      "ts": "2026-08-11T07:58:43.369955Z"
+    },
+    {
+      "service": "api",
+      "payload": {
+        "message_preview": "Can I get help with policy and monitoring?"
+      },
+      "event": "request_received",
+      "level": "info",
+      "ts": "2026-08-11T07:58:43.773799Z"
+    },
+    {
+      "service": "api",
+      "payload": {
+        "message_preview": "Here is my phone [REDACTED_PHONE_VN], what should be logged?"
+      },
+      "event": "request_received",
+      "level": "info",
+      "ts": "2026-08-11T07:58:44.172018Z"
+    },
+    {
+      "service": "api",
+      "latency_ms": 1050,
+      "tokens_in": 36,
+      "tokens_out": 118,
+      "cost_usd": 0.001878,
+      "quality_score": 0.9,
+      "payload": {
+        "answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."
+      },
+      "event": "response_sent",
+      "session_id": "s01",
+      "model": "claude-sonnet-4-5",
+      "env": "dev",
+      "user_id_hash": "2055254ee30a",
+      "feature": "qa",
+      "correlation_id": "req-d2d5ab5d",
+      "level": "info",
+      "ts": "2026-08-11T08:42:38.018857Z"
+    },
+    {
+      "service": "api",
+      "latency_ms": 369,
+      "tokens_in": 39,
+      "tokens_out": 117,
+      "cost_usd": 0.001872,
+      "quality_score": 0.8,
+      "payload": {
+        "answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."
+      },
+      "event": "response_sent",
+      "session_id": "s03",
+      "model": "claude-sonnet-4-5",
+      "env": "dev",
+      "user_id_hash": "97ce842ec69d",
+      "feature": "summary",
+      "correlation_id": "req-f4b24e01",
+      "level": "info",
+      "ts": "2026-08-11T08:42:38.392306Z"
+    },
+    {
+      "service": "api",
+      "latency_ms": 371,
+      "tokens_in": 32,
+      "tokens_out": 130,
+      "cost_usd": 0.002046,
+      "quality_score": 0.8,
+      "payload": {
+        "answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."
+      },
+      "event": "response_sent",
+      "session_id": "s02",
+      "model": "claude-sonnet-4-5",
+      "env": "dev",
+      "user_id_hash": "95b6504a8bd6",
+      "feature": "qa",
+      "correlation_id": "req-36da0334",
+      "level": "info",
+      "ts": "2026-08-11T08:42:38.767445Z"
+    },
+    {
+      "service": "api",
+      "latency_ms": 366,
+      "tokens_in": 35,
+      "tokens_out": 171,
+      "cost_usd": 0.00267,
+      "quality_score": 0.9,
+      "payload": {
+        "answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."
+      },
+      "event": "response_sent",
+      "session_id": "s04",
+      "model": "claude-sonnet-4-5",
+      "env": "dev",
+      "user_id_hash": "75af07890985",
+      "feature": "qa",
+      "correlation_id": "req-beff8d19",
+      "level": "info",
+      "ts": "2026-08-11T08:42:39.140536Z"
+    },
+    {
+      "service": "api",
+      "latency_ms": 366,
+      "tokens_in": 33,
+      "tokens_out": 82,
+      "cost_usd": 0.001329,
+      "quality_score": 0.9,
+      "payload": {
+        "answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."
+      },
+      "event": "response_sent",
+      "session_id": "s05",
+      "model": "claude-sonnet-4-5",
+      "env": "dev",
+      "user_id_hash": "64f6ec689229",
+      "feature": "qa",
+      "correlation_id": "req-6a84b862",
+      "level": "info",
+      "ts": "2026-08-11T08:42:39.511507Z"
+    },
+    {
+      "service": "api",
+      "error_type": "AttributeError",
+      "payload": {
+        "detail": "'Langfuse' object has no attribute 'update_current_trace'",
+        "message_preview": "What is your refund policy? My email is [REDACTED_EMAIL]"
+      },
+      "event": "request_failed",
+      "level": "error",
+      "ts": "2026-08-11T07:58:42.970149Z"
+    },
+    {
+      "service": "api",
+      "error_type": "AttributeError",
+      "payload": {
+        "detail": "'Langfuse' object has no attribute 'update_current_trace'",
+        "message_preview": "Explain why metrics traces and logs work together"
+      },
+      "event": "request_failed",
+      "level": "error",
+      "ts": "2026-08-11T07:58:43.364352Z"
+    },
+    {
+      "service": "api",
+      "error_type": "AttributeError",
+      "payload": {
+        "detail": "'Langfuse' object has no attribute 'update_current_trace'",
+        "message_preview": "Summarize the monitoring policy for production logging"
+      },
+      "event": "request_failed",
+      "level": "error",
+      "ts": "2026-08-11T07:58:43.770685Z"
+    },
+    {
+      "service": "api",
+      "error_type": "AttributeError",
+      "payload": {
+        "detail": "'Langfuse' object has no attribute 'update_current_trace'",
+        "message_preview": "Can I get help with policy and monitoring?"
+      },
+      "event": "request_failed",
+      "level": "error",
+      "ts": "2026-08-11T07:58:44.167624Z"
+    },
+    {
+      "service": "api",
+      "error_type": "AttributeError",
+      "payload": {
+        "detail": "'Langfuse' object has no attribute 'update_current_trace'",
+        "message_preview": "Here is my phone [REDACTED_PHONE_VN], what should be logged?"
+      },
+      "event": "request_failed",
+      "level": "error",
+      "ts": "2026-08-11T07:58:44.567828Z"
+    }
+  ]
+}

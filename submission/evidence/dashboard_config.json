@@ -1,0 +1,69 @@
+{
+  "file": "config/dashboard.yaml",
+  "schema_version": 1,
+  "title": "Day 13 AI Observability",
+  "time_range_minutes": 60,
+  "refresh_seconds": 30,
+  "panels": [
+    {
+      "id": "latency",
+      "fields": [
+        "latency_ms"
+      ],
+      "aggregations": [
+        "p50",
+        "p95",
+        "p99"
+      ]
+    },
+    {
+      "id": "traffic",
+      "fields": [
+        "event"
+      ],
+      "aggregations": [
+        "count",
+        "rate_per_minute"
+      ]
+    },
+    {
+      "id": "errors",
+      "fields": [
+        "error_type"
+      ],
+      "aggregations": [
+        "error_rate_pct",
+        "count_by_value"
+      ]
+    },
+    {
+      "id": "cost",
+      "fields": [
+        "cost_usd"
+      ],
+      "aggregations": [
+        "sum_by_minute",
+        "total"
+      ]
+    },
+    {
+      "id": "tokens",
+      "fields": [
+        "tokens_in",
+        "tokens_out"
+      ],
+      "aggregations": [
+        "sum_by_field"
+      ]
+    },
+    {
+      "id": "quality",
+      "fields": [
+        "quality_score"
+      ],
+      "aggregations": [
+        "mean"
+      ]
+    }
+  ]
+}
