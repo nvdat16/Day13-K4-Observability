@@ -80,6 +80,6 @@ Với mỗi thành viên, ghi rõ nhiệm vụ và link commit/PR tương ứng.
 
 | Thành viên | Phần việc | Commit/PR | Điều đã học |
 |---|---|---|---|
-| A — Tech Lead/Backend Engineer | Middleware, correlation ID, enrichment, PII-safe logging | [`6e2ff5e`](https://github.com/nvdat16/Day13-K4-Observability/commit/6e2ff5e) | Correlation ID phải được bind trước log đầu tiên và PII phải scrub trước JSON renderer. |
-| B — SRE & Alerts Engineer | Langfuse/prompt v1-v2, SLO, alert rules, runbook | [`dda646f`](https://github.com/nvdat16/Day13-K4-Observability/commit/dda646f) | Alert nên symptom-based và trace cần metadata prompt/correlation có thể kiểm chứng. |
-| C — QA & Chief Investigator | Dashboard 6 panel, load test, practice/challenge, Metrics → Traces → Logs, evidence và report | [`9ba5845`](https://github.com/nvdat16/Day13-K4-Observability/commit/9ba5845) | P95 phản ánh tail latency tốt hơn average; chỉ kết luận root cause khi metric, span và log cùng khớp. |
+| Nguyễn Văn Đạt - 2A202601968 | Middleware, correlation ID, enrichment, PII-safe logging | [`6e2ff5e`](https://github.com/nvdat16/Day13-K4-Observability/commit/6e2ff5e) | Correlation ID phải được bind trước log đầu tiên và PII phải scrub trước JSON renderer. |
+| Mai Văn Phương - 2A202601418 | Langfuse/prompt v1-v2, SLO, alert rules, runbook | [`dda646f`](https://github.com/nvdat16/Day13-K4-Observability/commit/dda646f) | Alert nên symptom-based và trace cần metadata prompt/correlation có thể kiểm chứng. |
+| Nguyễn Đặng Thành Vinh - 2A202602021 | Dashboard 6 panel, load test, practice/challenge, Metrics → Traces → Logs, evidence và report | [`9ba5845`](https://github.com/nvdat16/Day13-K4-Observability/commit/9ba5845) | P95 phản ánh tail latency tốt hơn average; chỉ kết luận root cause khi metric, span và log cùng khớp. |
