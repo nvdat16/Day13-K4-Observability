@@ -4,22 +4,44 @@
 
 - Tên nhóm:
 - Repository URL:
-- Commit SHA cuối:
+- Commit SHA cuối: `5ba6472`
 - Thành viên và vai trò:
 
 ## 2. Kết quả kỹ thuật
 
-- Điểm `validate_logs.py`:
-- Tổng số traces:
-- Số PII leak còn lại:
-- Link/đường dẫn dashboard:
+- Điểm `validate_logs.py`: 30/100
+- Tổng số log records analyzed: 21
+- Records thiếu required fields: 20
+- Records thiếu enrichment/context: 20
+- Unique correlation IDs found: 0
+- Số PII leak còn lại: 0
+- Link/đường dẫn dashboard: Chưa cung cấp
 
 ## 3. Logging và tracing
 
-- Evidence correlation ID:
-- Evidence PII redaction:
-- Evidence trace waterfall:
-- Giải thích một span đáng chú ý:
+- Evidence correlation ID: `python scripts/validate_logs.py` báo `Unique correlation IDs found: 0`, chưa đạt yêu cầu propagation.
+- Evidence PII redaction: `python scripts/validate_logs.py` báo `Potential PII leaks detected: 0` và `[PASSED] PII scrubbing`.
+- Evidence trace waterfall: Chưa cung cấp.
+- Giải thích một span đáng chú ý: Chưa cung cấp trace/span cụ thể.
+
+Kết quả chi tiết:
+
+```text
+--- Lab Verification Results ---
+Total log records analyzed: 21
+Records with missing required fields: 20
+Records with missing enrichment (context): 20
+Unique correlation IDs found: 0
+Potential PII leaks detected: 0
+
+--- Grading Scorecard (Estimates) ---
+- [FAILED] Missing required fields (ts, level, etc.)
+- [FAILED] Correlation ID propagation (less than 2 unique IDs)
+- [FAILED] Log enrichment (missing user_id_hash, etc.)
+- [PASSED] PII scrubbing
+
+Estimated Score: 30/100
+```
 
 ## 4. Prompt versioning
 
