@@ -4,7 +4,7 @@ slis:
   latency_p95_ms:
     objective: 3000
     target: 99.5
-    note: Replace with your group's target
+    note: Protect interactive chat responsiveness; investigate sustained breaches with dashboard, trace, and correlated logs.
   error_rate_pct:
     objective: 2
     target: 99.0

@@ -29,6 +29,14 @@ Giữ time range mặc định 60 phút, refresh 30 giây và hiển thị thres
 python scripts/validate_dashboard.py
 ```
 
+Repo có dashboard runtime tích hợp trong FastAPI. Sau khi chạy `uvicorn app.main:app --reload --env-file .env`, mở:
+
+- `http://127.0.0.1:8000/dashboard`: toàn bộ cửa sổ 60 phút;
+- `http://127.0.0.1:8000/dashboard?phase=baseline`: dữ liệu trước incident đầu tiên;
+- `http://127.0.0.1:8000/dashboard?phase=incident`: dữ liệu giữa lần enable/disable incident gần nhất.
+
+Dashboard đọc `data/logs.jsonl`, lấy threshold từ `config/dashboard.yaml` và tự refresh mỗi 30 giây.
+
 Validator kiểm tra cấu trúc contract; nó không thể chứng minh biểu đồ trong ảnh dùng đúng dữ liệu. Evidence runtime vẫn bắt buộc.
 
 ## Cách kiểm tra runtime

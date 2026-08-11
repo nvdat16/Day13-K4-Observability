@@ -3,10 +3,11 @@ from __future__ import annotations
 import os
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from structlog.contextvars import bind_contextvars
 
 from .agent import LabAgent
+from .dashboard import build_dashboard_snapshot, render_dashboard_html
 from .incidents import disable, enable, status
 from .logging_config import configure_logging, get_logger
 from .metrics import record_error, snapshot
@@ -52,6 +53,16 @@ async def metrics() -> dict:
     return snapshot()
 
 
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(phase: str = "all") -> HTMLResponse:
+    return HTMLResponse(render_dashboard_html(phase))
+
+
+@app.get("/dashboard/data")
+async def dashboard_data(phase: str = "all") -> dict:
+    return build_dashboard_snapshot(phase=phase)
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: Request, body: ChatRequest) -> ChatResponse:
     # Enrich — tất cả log sau đây tự động có các trường này
@@ -59,7 +70,7 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse:
         user_id_hash=hash_user_id(body.user_id),
         session_id=body.session_id,
         feature=body.feature,
-        model="claude-sonnet-4-5",
+        model=agent.model,
         env=os.getenv("APP_ENV", "dev"),
     )
 
