@@ -8,11 +8,7 @@ slis:
     objective: 3000
     unit: ms
     target: 99.5
-    measurement_method: "P95 latency from response_sent.latency_ms in data/logs.jsonl over 1-minute buckets"
-    good_event: "response_sent"
-    acceptable_threshold: "P95 <= 3000ms"
-    description: "Time from request received to response sent for 95th percentile of requests"
-
+    note: Protect interactive chat responsiveness; investigate sustained breaches with dashboard, trace, and correlated logs.
   error_rate_pct:
     objective: 2
     unit: percent

@@ -2,62 +2,31 @@
 
 ## 1. Thông tin nhóm
 
-- Tên nhóm:
-- Repository URL:
-- Commit SHA cuối: `5ba6472`
+- Tên nhóm: K4 Observability — nhóm 3 thành viên
+- Repository URL: `https://github.com/nvdat16/Day13-K4-Observability`
+- Commit SHA cuối: nộp theo kết quả `git rev-parse HEAD` cùng repository URL trên Codelabs
 - Thành viên và vai trò:
+  - Thành viên A — Tech Lead/Backend Engineer: CP1 middleware, correlation ID và log enrichment.
+  - Thành viên B — SRE & Alerts Engineer: CP2 Langfuse, prompt versioning, SLO, alert rules và runbook.
+  - Thành viên C — QA & Chief Investigator: dashboard runtime/spec, load test, practice/challenge CP3, evidence và báo cáo.
 
 ## 2. Kết quả kỹ thuật
 
-### Load Test Results (Checkpoint 2)
-- **Tổng requests thành công**: 20+ requests
-- **API Status**: 200 OK (tracing enabled)
-- **Error Rate**: 0%
-
-### Metrics sau Load Test (`GET /metrics`):
-```json
-{
-  "traffic": 20,
-  "latency_p50": 373.0,
-  "latency_p95": 1149.0,
-  "latency_p99": 1149.0,
-  "avg_cost_usd": 0.0019,
-  "total_cost_usd": 0.038,
-  "tokens_in_total": 660,
-  "tokens_out_total": 2404,
-  "error_rate_pct": 0.0,
-  "quality_avg": 0.88
-}
-```
-
-### Log Sample (response_sent event):
-```json
-{
-  "service": "api",
-  "event": "response_sent",
-  "correlation_id": "req-d2d5ab5d",
-  "latency_ms": 1050,
-  "tokens_in": 36,
-  "tokens_out": 118,
-  "cost_usd": 0.001878,
-  "quality_score": 0.9,
-  "user_id_hash": "2055254ee30a",
-  "session_id": "s01",
-  "feature": "qa",
-  "model": "claude-sonnet-4-5",
-  "env": "dev"
-}
-```
-
-- **Điểm `validate_logs.py`**: 30/100 (baseline)
-- **Số PII leak còn lại**: 0 (PII đã được redact)
-- **Link/đường dẫn dashboard**: `config/dashboard.yaml` (validated: 6/6 panel)
+- Điểm `validate_logs.py`: 100/100
+- Tổng số traces trên Langfuse: 211
+- Tổng số log records analyzed: 96
+- Records thiếu required fields: 0
+- Records thiếu enrichment/context: 0
+- Unique correlation IDs found: 44
+- Số PII leak còn lại: 0
+- Link/đường dẫn dashboard: `http://127.0.0.1:8000/dashboard`; source `app/dashboard.py`
 
 ## 3. Logging và tracing
 
-### Logging Infrastructure
-- **Correlation ID**: Được tạo tự động trong `CorrelationIdMiddleware`, propagate qua tất cả requests
-- **PII Redaction**: Email, phone, credit card được redact tự động với pattern `[REDACTED_EMAIL]`, `[REDACTED_PHONE_VN]`, `[REDACTED_CREDIT_CARD]`
+- Evidence correlation ID: `submission/evidence/cp1-redacted-correlation-log.png`; `python scripts/validate_logs.py` báo `Unique correlation IDs found: 44`.
+- Evidence PII redaction: `submission/evidence/cp1-redacted-correlation-log.png`; `python scripts/validate_logs.py` báo `Potential PII leaks detected: 0` và `[PASSED] PII scrubbing`.
+- Evidence trace waterfall: `submission/evidence/cp2-langfuse-trace-list.png`
+- Giải thích một span đáng chú ý: Trace `0eaae54da98abc948de414e3d8a796d2` có span `run` mất khoảng 2.88s, gắn session `s10`, user hash `105a9cef3903`, tags `lab`, `qa`, `claude-sonnet-4-5`, và metadata `correlation_id=req-596f27bd` để đối chiếu với log thô.
 
 ### Trace Metadata (Langfuse)
 Mỗi trace bao gồm:
@@ -69,10 +38,13 @@ Mỗi trace bao gồm:
 - `session_id`: Session của user
 - `user_id_hash`: User ID đã hash (không lộ PII)
 
-### Evidence Logging
-- Correlation IDs: `req-d2d5ab5d`, `req-36da0334`, `req-f4b24e01`, ... (20+ unique IDs)
-- PII leaks: 0 (tất cả email/phone/credit card đã redact)
-- Sample trace correlation: `req-d2d5ab5d` link giữa trace và log
+```text
+--- Lab Verification Results ---
+Total log records analyzed: 96
+Records with missing required fields: 0
+Records with missing enrichment (context): 0
+Unique correlation IDs found: 44
+Potential PII leaks detected: 0
 
 ### Metrics → Traces → Logs Flow
 1. Request đến `/chat` → middleware tạo `correlation_id`
@@ -82,46 +54,18 @@ Mỗi trace bao gồm:
 
 ## 4. Prompt versioning
 
-### Prompt Configuration
-- **Prompt name**: `day13-chat`
-- **Default label**: `production` (từ `LANGFUSE_PROMPT_LABEL`)
-
-### Prompt Versions Created:
-
-| Version | Labels | Description |
-|---------|--------|-------------|
-| v1 | `baseline`, `production` | Basic prompt with Feature/Docs/Question template |
-| v2 | `candidate` | Enhanced prompt with structured format and guidelines |
-
-### Script Used:
-```bash
-python scripts/prompt_versioning.py
-```
-
-### Trace Metadata Captured:
-```json
-{
-  "prompt_name": "day13-chat",
-  "prompt_label": "production" | "baseline" | "candidate",
-  "prompt_version": "1" | "2",
-  "prompt_source": "langfuse" | "local" | "local-fallback",
-  "correlation_id": "req-xxx",
-  "session_id": "s01",
-  "user_id_hash": "xxx"
-}
-```
-
-### Rollback Evidence:
-- Rollback production label from v2 to v1: Manual via Langfuse dashboard
-- Instructions: Langfuse > Prompts > day13-chat > change production label to version 1
-
-### Evidence Files:
-- `submission/evidence/prompt_versioning.json` - Full prompt versioning config
-- `submission/evidence/log_samples.json` - Log samples with correlation IDs
+- Prompt name: `day13-chat`
+- Version/label baseline: v1 — `baseline`, hiện có label `production`
+- Version/label candidate: v2 — `candidate`, `latest`
+- Trace ID của mỗi version: v1 `291b603806d3da44581dc132d262fd16`; v2 `401ce1db601b1bd69f166a75f425aec8`
+- Bằng chứng đổi label hoặc rollback: sau khi giữ v2 là `candidate`, label `production` đang trỏ lại v1. Chi tiết tại [`evidence/cp2-prompt-versioning.md`](evidence/cp2-prompt-versioning.md).
 
 ## 5. Dashboard, SLO và alerts
 
-### Checkpoint 2 - Thành viên B (SRE & Alerts Engineer)
+- Kết quả `validate_dashboard.py`: HỢP LỆ: 6/6 panel có trong dashboard contract.
+- Evidence dashboard: [`evidence/cp2-dashboard-baseline.png`](evidence/cp2-dashboard-baseline.png), [`evidence/cp2-dashboard-incident.png`](evidence/cp2-dashboard-incident.png), [`evidence/cp2-dashboard-runtime.png`](evidence/cp2-dashboard-runtime.png) và [`evidence/cp2-dashboard-validator.png`](evidence/cp2-dashboard-validator.png).
+- SLO đã chọn và lý do: P95 latency <= 3000 ms, error rate <= 2%, daily cost <= 2.5 USD và quality score trung bình >= 0.75 để theo dõi trải nghiệm người dùng, độ ổn định, chi phí và chất lượng phản hồi.
+- Alert rules và runbook: `config/alert_rules.yaml`, `docs/alerts.md`
 
 #### Kết quả `validate_dashboard.py`:
 ```
@@ -176,13 +120,13 @@ HỢP LỆ: 6/6 panel có trong dashboard contract.
 
 ## 6. Điều tra challenge
 
-- Challenge ID:
-- Triệu chứng từ metrics:
-- Trace ID liên quan:
-- Log line/correlation ID liên quan:
-- Root cause:
-- Fix action:
-- Preventive measure:
+- Challenge ID: `day13-k4-observability-v1` (K4), incident `rag_slow`, affected feature `monitoring`.
+- Triệu chứng từ metrics: baseline P95 `4192 ms`; practice P95 `11079 ms` (tăng khoảng 164%); lượt challenge tách biệt có P50 `3727 ms`, P95/P99 `10270 ms`, không có error. Latency là tín hiệu bất thường chính.
+- Trace ID liên quan: `5e42ed7ffa6893b8bcec4d247d9ee4c6`; trace `3.765 s`, trong đó span `retrieve` chiếm `2.503 s` (~66.5%).
+- Log line/correlation ID liên quan: `req-0ab75f70`, session `k4-challenge-s01`; log `response_sent.latency_ms=3764`. Trace mang cùng correlation tag.
+- Root cause: khi incident `rag_slow` bật, `app/mock_rag.py::retrieve` chạy blocking `time.sleep(2.5)` trước khi truy xuất tài liệu.
+- Fix action: tắt incident ngay; loại bỏ blocking delay. Với retriever thật, áp dụng timeout, bounded retry, circuit breaker và fallback an toàn.
+- Preventive measure: giữ span `retrieve` và correlation tag, cảnh báo khi P95 vượt `3000 ms` trong cửa sổ bền vững, và chạy so sánh baseline/incident trong regression test. Evidence chi tiết: [`evidence/cp3-investigation.md`](evidence/cp3-investigation.md).
 
 ## 7. Đóng góp cá nhân
 
@@ -190,28 +134,6 @@ Với mỗi thành viên, ghi rõ nhiệm vụ và link commit/PR tương ứng.
 
 | Thành viên | Phần việc | Commit/PR | Điều đã học |
 |---|---|---|---|
-| **Thành viên B (SRE)** | Alert Rules, SLO, Dashboard Config, Alert Runbook | Fix Langfuse SDK v3 compatibility | |
-
-## 8. Checkpoint 2 Summary
-
-### ✅ Đã hoàn thành (Thành viên B):
-- [x] Dashboard Contract: 6/6 panel validated
-- [x] SLO Configuration: 4 SLIs với measurement methods
-- [x] Alert Rules: 4 alerts (Latency, Error, Cost, Quality)
-- [x] Alert Runbook: Chi tiết với 3 bước kiểm tra và mitigation
-- [x] Metrics: 20+ requests thành công, error_rate: 0%
-- [x] Traces: Langfuse tracing enabled, metadata captured
-- [x] Logs: Correlation ID propagation, PII redaction working
-- [x] Prompt Versioning: v1 (baseline, production) và v2 (candidate) đã tạo trên Langfuse
-- [x] Evidence files: Tạo đầy đủ trong `submission/evidence/`
-
-### Files đã tạo/sửa:
-- `config/alert_rules.yaml` - 4 alert rules
-- `config/slo.yaml` - SLO chi tiết với measurement methods
-- `docs/alerts.md` - Alert runbook đầy đủ
-- `scripts/dashboard_app.py` - Streamlit dashboard (6 panels)
-- `scripts/prompt_versioning.py` - Script quản lý prompt versions
-- `scripts/generate_evidence.py` - Script tạo evidence files
-- `app/agent.py` - Fix Langfuse SDK v3 compatibility
-- `submission/REPORT.md` - Cập nhật evidence
-- `submission/evidence/*.json` - Evidence files đầy đủ
+| Nguyễn Văn Đạt - 2A202601968 | Middleware, correlation ID, enrichment, PII-safe logging | [`6e2ff5e`](https://github.com/nvdat16/Day13-K4-Observability/commit/6e2ff5e) | Correlation ID phải được bind trước log đầu tiên và PII phải scrub trước JSON renderer. |
+| Mai Văn Phương - 2A202601418 | Langfuse/prompt v1-v2, SLO, alert rules, runbook | [`dda646f`](https://github.com/nvdat16/Day13-K4-Observability/commit/dda646f) | Alert nên symptom-based và trace cần metadata prompt/correlation có thể kiểm chứng. |
+| Nguyễn Đặng Thành Vinh - 2A202602021 | Dashboard 6 panel, load test, practice/challenge, Metrics → Traces → Logs, evidence và report | [`9ba5845`](https://github.com/nvdat16/Day13-K4-Observability/commit/9ba5845) | P95 phản ánh tail latency tốt hơn average; chỉ kết luận root cause khi metric, span và log cùng khớp. |

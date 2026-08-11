@@ -14,21 +14,18 @@ class CorrelationIdMiddleware(BaseHTTPMiddleware):
         clear_contextvars()
 
         # 2. Lấy từ header hoặc tạo mới, format: req-<8 ký tự hex>
-        correlation_id = request.headers.get(
-            "x-request-id",
-            f"req-{uuid.uuid4().hex[:8]}"
-        )
+        correlation_id = request.headers.get("x-request-id") or f"req-{uuid.uuid4().hex[:8]}"
 
         # 3. Bind vào structlog context — mọi log sau đó tự động có trường này
         bind_contextvars(correlation_id=correlation_id)
-
         request.state.correlation_id = correlation_id
 
         start = time.perf_counter()
         response = await call_next(request)
 
         # 4. Trả correlation ID và thời gian xử lý trong response header
+        elapsed_ms = (time.perf_counter() - start) * 1000
         response.headers["x-request-id"] = correlation_id
-        response.headers["x-response-time-ms"] = f"{(time.perf_counter() - start) * 1000:.1f}"
+        response.headers["x-response-time-ms"] = f"{elapsed_ms:.2f}"
 
         return response
